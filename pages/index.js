@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
-import { io } from "Socket.IO-client";
+import { io } from "socket.io-client";
 let socket;
 
 const getDescriptionEnglishStatus = (statusSession) => {
@@ -208,9 +208,11 @@ const Home = () => {
             ) : (
               <>
                 {imgQrCode ? (
-                  <img
+                  <Image
                     src={`/qrcode/${user}/${imgQrCode}`}
                     alt="Image QR code conection whatsapp"
+                    width={300}
+                    height={300}
                   />
                 ) : statusSession != "successChat" &&
                   statusSession != "chatsAvailable" ? (

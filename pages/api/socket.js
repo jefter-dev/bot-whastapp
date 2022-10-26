@@ -1,5 +1,5 @@
 // socket.js
-import { Server } from "Socket.IO";
+import { Server } from "socket.io";
 import fs, { writeFile } from "fs";
 const venom = require("venom-bot");
 
