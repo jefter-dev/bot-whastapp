@@ -123,7 +123,7 @@ const Home = () => {
     });
 
     socket.on("statusSession", (status) => {
-      console.log("statusSession: ", status);
+      console.log("[statusSession]: ", status);
 
       if (status == "qrReadFail" || status == "successChat") {
         setImgQrCode(false);
