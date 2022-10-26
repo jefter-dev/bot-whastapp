@@ -178,10 +178,17 @@ const Home = () => {
 
   const restartPage = () => {
     return window.location.reload();
-  }
+  };
 
   return (
     <div className="container">
+      <Image
+        src={`/test.png`}
+        alt="Image test HEROKU"
+        width={300}
+        height={300}
+      />
+      <br />
       {!statusSession ? (
         <button onClick={socketInitializer}>
           <span></span>
@@ -201,7 +208,7 @@ const Home = () => {
           >
             {getDescriptionStatus(statusSession)}
           </div>
-          <div className="containerImage"> 
+          <div className="containerImage">
             {statusSession == "qrReadFail" ? (
               <a href="javascript:;" onClick={restartPage}>
                 Recarregar novamente
