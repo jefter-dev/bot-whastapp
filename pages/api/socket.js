@@ -65,7 +65,7 @@ const createFolder = (pathImgQrcode) => {
     // Create the directory
     fs.mkdir(pathImgQrcode, (err) => {
       if (err) {
-        console.log("Error creating directory! =(");
+        console.log("Error creating directory! =(: ", err);
         return false;
       }
 
@@ -87,8 +87,10 @@ const saveImageQrCodeCurrent = (base64Qr, imgQrcode) => {
   var imageBuffer = response;
   fs.writeFile(imgQrcode, imageBuffer["data"], "binary", function (err) {
     if (err != null) {
-      console.log(err);
+      console.log("Erro saved image! =(", err);
     }
+    
+    console.log("Saved image successefully! =(", err);
   });
 
   return false;
