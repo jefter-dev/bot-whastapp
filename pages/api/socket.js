@@ -98,6 +98,8 @@ const SocketHandler = (req, res) => {
     return res.status(404).json({ status: false, message: "Not found user" });
   }
 
+  console.log("res.socket.server.io: ", res.socket.server.io);
+
   if (res.socket.server.io) {
     console.log("Socket is already running");
   } else {

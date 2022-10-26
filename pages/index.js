@@ -200,7 +200,7 @@ const Home = () => {
           >
             {getDescriptionStatus(statusSession)}
           </div>
-          <div className="containerImage">
+          <div className="containerImage"> 
             {statusSession == "qrReadFail" ? (
               <a href="javascript:;" onClick={restartPage}>
                 Recarregar novamente
