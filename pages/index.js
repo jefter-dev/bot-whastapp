@@ -111,6 +111,7 @@ const Home = () => {
     console.log("socketInitializer");
 
     fetch(`/api/socket?user=${user}`);
+    // fetch(`https://bot-whastapp.vercel.app/api/socket?user=${user}`);
 
     setStatusSession("Carregando...");
     socket = io();

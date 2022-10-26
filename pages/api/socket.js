@@ -1,6 +1,7 @@
 // socket.js
 import { Server } from "socket.io";
 import fs, { writeFile } from "fs";
+import NextCors from "nextjs-cors";
 const venom = require("venom-bot");
 
 const getRandomNumber = () => {
@@ -93,7 +94,16 @@ const saveImageQrCodeCurrent = (base64Qr, imgQrcode) => {
   return false;
 };
 
-const SocketHandler = (req, res) => {
+const SocketHandler = async (req, res) => {
+  // Run the cors middleware
+  // nextjs-cors uses the cors package, so we invite you to check the documentation https://github.com/expressjs/cors
+  await NextCors(req, res, {
+    // Options
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+    origin: process.env.ORIGINS_CORS,
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  });
+
   if (!req.query.user) {
     return res.status(404).json({ status: false, message: "Not found user" });
   }
