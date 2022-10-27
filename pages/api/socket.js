@@ -137,7 +137,7 @@ const SocketHandler = async (req, res) => {
           });
 
           socket.on("sendFile", (data, callback) => {
-            console.log("FILE: ", data.file);
+            // console.log("FILE: ", data.file); // DEBUG
 
             const sendFileFromBase64Result = async () => {
               // console.log("FILE BASE 64 SERVER: ", data.file); // DEBUG
