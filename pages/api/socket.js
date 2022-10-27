@@ -67,7 +67,6 @@ const viewFilesInFolder = function (path) {
       var curPath = path + "/" + file;
       console.log("curPath: ", curPath); // DEBUG
     });
-    fs.rmdirSync(path);
   }
 };
 
