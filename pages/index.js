@@ -154,7 +154,7 @@ const Home = () => {
     return false;
   };
 
-  const sendFile = () => {
+  const sendFile = async() => {
     const message = document.getElementById("message").value;
     const phoneNumber = document.getElementById("phoneNumber").value;
     const file = document.getElementById("file");
@@ -163,10 +163,12 @@ const Home = () => {
     if (file.files.length == 0) {
       console.log("Selecione um arquivo.");
     } else {
+      const fileBase64 = await toBase64(file.files[0]);
+
       console.log("FILE: ", file.files);
       socket.emit(
         "sendFile",
-        { file: file.files[0], message, phoneNumber, nameFile },
+        { file: fileBase64, message, phoneNumber, nameFile },
         (status) => {
           console.log("STATUS DO UPLOAD: ", status);
         }
@@ -180,15 +182,16 @@ const Home = () => {
     return window.location.reload();
   };
 
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
   return (
     <div className="container">
-      <Image
-        src={`/test.png`}
-        alt="Image test HEROKU"
-        width={300}
-        height={300}
-      />
-      <br />
       {!statusSession ? (
         <button onClick={socketInitializer}>
           <span></span>
@@ -217,7 +220,10 @@ const Home = () => {
               <>
                 {imgQrCode ? (
                   <Image
-                    src={`/qrcode/${user}/${imgQrCode}`}
+                    src={imgQrCode}
+                    unoptimized
+                    blurDataURL={imgQrCode}
+                    placeholder="blur"
                     alt="Image QR code conection whatsapp"
                     width={300}
                     height={300}

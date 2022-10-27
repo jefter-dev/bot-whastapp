@@ -43,6 +43,25 @@ async function sendFile(client, nameFile, phoneNumber) {
   }
 }
 
+async function sendFileFromBase64(client, fileBase64, nameFile, phoneNumber) {
+  // Send file base 64
+  try {
+    const resultSendFileFromBase64 = await client.sendFileFromBase64(
+      `${phoneNumber}@c.us`,
+      fileBase64,
+      nameFile,
+      "File uploaded successfully"
+    );
+
+    console.log("resultSendFileFromBase64: ", resultSendFileFromBase64);
+
+    return { status: true, message: resultSendFileFromBase64.text };
+  } catch (error) {
+    console.error("Error when sending: ", error); //return object error
+    return { status: false, message: error.text };
+  }
+}
+
 const deleteFolderRecursive = function (path) {
   if (fs.existsSync(path)) {
     fs.readdirSync(path).forEach(function (file) {
@@ -59,52 +78,6 @@ const deleteFolderRecursive = function (path) {
     });
     fs.rmdirSync(path);
   }
-};
-
-const viewFilesInFolder = function (path) {
-  if (fs.existsSync(path)) {
-    fs.readdirSync(path).forEach(function (file) {
-      var curPath = path + "/" + file;
-      console.log("curPath: ", curPath); // DEBUG
-    });
-  }
-};
-
-const createFolder = (pathImgQrcode) => {
-  // Check if the path exists
-  if (!fs.existsSync(pathImgQrcode)) {
-    // Create the directory
-    fs.mkdir(pathImgQrcode, (err) => {
-      if (err) {
-        console.log("Error creating directory! =(: ", err);
-        return false;
-      }
-
-      console.log("Directory created! =)");
-    });
-  }
-};
-
-const saveImageQrCodeCurrent = (base64Qr, imgQrcode) => {
-  var matches = base64Qr.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
-    response = {};
-
-  if (matches.length !== 3) {
-    return new Error("Invalid input string");
-  }
-  response.type = matches[1];
-  response.data = new Buffer.from(matches[2], "base64");
-
-  var imageBuffer = response;
-  fs.writeFile(imgQrcode, imageBuffer["data"], "binary", function (err) {
-    if (err != null) {
-      console.log("Erro saved image! =(", err);
-    }
-    
-    console.log("Saved image successefully! =)", err);
-  });
-
-  return false;
 };
 
 const SocketHandler = async (req, res) => {
@@ -136,24 +109,7 @@ const SocketHandler = async (req, res) => {
           "connection", // Pass the name of the client you want to start the bot
           //catchQR
           (base64Qr, asciiQR, attempts, urlCode) => {
-            // console.log(asciiQR); // Optional to log the QR in the terminal
-            // console.log("Terminal qrcode: ", asciiQR);
-            // console.log("base64 image string qrcode: ", base64Qrimg);
-            // console.log("urlCode (data-ref): ", urlCode);
-            const nameImage = `qrcode_${getRandomNumber()}.png`;
-            const pathImgQrcode = `public/qrcode/${req.query.user}`;
-            const imgQrcode = `public/qrcode/${req.query.user}/${nameImage}`;
-
-            // Delete user directory
-            // deleteFolderRecursive(pathImgQrcode);
-
-            viewFilesInFolder(pathImgQrcode);
-            createFolder(pathImgQrcode);
-            saveImageQrCodeCurrent(base64Qr, imgQrcode);
-
-            if (imgQrcode) {
-              socket.emit("imgQrCode", nameImage);
-            }
+            socket.emit("imgQrCode", base64Qr);
           },
           // statusFind
           (statusSession, session) => {
@@ -182,48 +138,40 @@ const SocketHandler = async (req, res) => {
 
           socket.on("sendFile", (data, callback) => {
             console.log("FILE: ", data.file);
-            // console.log("PHONE NUMBER: ", data.phoneNumber);
 
-            // sendFile(client, data.file, data.phoneNumber);
-            // console.log(file); // <Buffer 25 50 44 ...>
+            const sendFileFromBase64Result = async () => {
+              // console.log("FILE BASE 64 SERVER: ", data.file); // DEBUG
 
-            // save the content to the disk, for example
-            writeFile("public/relatorio.pdf", data.file, (err) => {
-              console.log("STATUS UPLOAD ARQUIVO: ", err);
-
-              if (!err) {
-                const sendFileResult = async () => {
-                  // Send standard company message
-                  try {
-                    const result = await sendMessage(
-                      client,
-                      data.message,
-                      data.phoneNumber
-                    );
-                    console.log("RESULT MESSAGE: ", result);
-                  } catch (error) {
-                    console.log("ERROR SEND MESSAGE EXTERNAL: ", error);
-                  }
-
-                  // Send file XML
-                  try {
-                    const result = await sendFile(
-                      client,
-                      data.nameFile,
-                      data.phoneNumber
-                    );
-
-                    console.log("RESULT SEND FILE: ", result);
-                    callback({ message: result.message });
-                  } catch (error) {
-                    console.log("ERROR SEND FILE EXTERNAL: ", error);
-                    callback({ message: "ERROR SEND FILE EXTERNAL" });
-                  }
-                };
-
-                sendFileResult();
+              // Send standard company message
+              try {
+                const result = await sendMessage(
+                  client,
+                  data.message,
+                  data.phoneNumber
+                );
+                console.log("RESULT MESSAGE: ", result);
+              } catch (error) {
+                console.log("ERROR SEND MESSAGE EXTERNAL: ", error);
               }
-            });
+
+              // Send file XML
+              try {
+                const result = await sendFileFromBase64(
+                  client,
+                  data.file,
+                  data.nameFile,
+                  data.phoneNumber
+                );
+
+                console.log("RESULT SEND FILE: ", result);
+                callback({ message: result.message });
+              } catch (error) {
+                console.log("ERROR SEND FILE EXTERNAL: ", error);
+                callback({ message: "ERROR SEND FILE EXTERNAL" });
+              }
+            };
+
+            sendFileFromBase64Result();
           });
         })
         .catch((erro) => {
