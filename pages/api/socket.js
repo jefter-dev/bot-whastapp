@@ -90,7 +90,7 @@ const saveImageQrCodeCurrent = (base64Qr, imgQrcode) => {
       console.log("Erro saved image! =(", err);
     }
     
-    console.log("Saved image successefully! =(", err);
+    console.log("Saved image successefully! =)", err);
   });
 
   return false;
@@ -134,7 +134,7 @@ const SocketHandler = async (req, res) => {
             const imgQrcode = `public/qrcode/${req.query.user}/${nameImage}`;
 
             // Delete user directory
-            deleteFolderRecursive(pathImgQrcode);
+            // deleteFolderRecursive(pathImgQrcode);
             createFolder(pathImgQrcode);
             saveImageQrCodeCurrent(base64Qr, imgQrcode);
 
