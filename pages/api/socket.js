@@ -12,7 +12,7 @@ const getRandomNumber = () => {
 
 async function sendMessage(client, message, phoneNumber) {
   // Send basic text
-  await client
+  client
     .sendText(`${phoneNumber}@c.us`, message)
     .then((result) => {
       console.log("Result: ", result); //return object success
