@@ -47,6 +47,8 @@ const deleteFolderRecursive = function (path) {
   if (fs.existsSync(path)) {
     fs.readdirSync(path).forEach(function (file) {
       var curPath = path + "/" + file;
+
+      // console.log("curPath: ", curPath); // DEBUG
       if (fs.lstatSync(curPath).isDirectory()) {
         // recurse
         deleteFolderRecursive(curPath);
@@ -54,6 +56,16 @@ const deleteFolderRecursive = function (path) {
         // delete file
         fs.unlinkSync(curPath);
       }
+    });
+    fs.rmdirSync(path);
+  }
+};
+
+const viewFilesInFolder = function (path) {
+  if (fs.existsSync(path)) {
+    fs.readdirSync(path).forEach(function (file) {
+      var curPath = path + "/" + file;
+      console.log("curPath: ", curPath); // DEBUG
     });
     fs.rmdirSync(path);
   }
@@ -135,6 +147,8 @@ const SocketHandler = async (req, res) => {
 
             // Delete user directory
             // deleteFolderRecursive(pathImgQrcode);
+
+            viewFilesInFolder(pathImgQrcode);
             createFolder(pathImgQrcode);
             saveImageQrCodeCurrent(base64Qr, imgQrcode);
 
