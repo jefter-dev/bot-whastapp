@@ -1,0 +1,3 @@
+2022/10/28-16:42:08.944 564 Log #3: 0 ops saved to Table #4 OK
+2022/10/28-16:42:09.991 564 Archiving C:\projetos\project-bot-whatsapp\tokens\connection\Default\File System\Origins/000003.log: IO error: C:\projetos\project-bot-whatsapp\tokens\connection\Default\File System\Origins/000003.log: Could not rename file: File currently in use. (ChromeMethodBFE: 14::RenameFile::2)
+2022/10/28-16:42:11.008 564 Archiving C:\projetos\project-bot-whatsapp\tokens\connection\Default\File System\Origins/MANIFEST-000001: IO error: C:\projetos\project-bot-whatsapp\tokens\connection\Default\File System\Origins/MANIFEST-000001: Could not rename file: File currently in use. (ChromeMethodBFE: 14::RenameFile::2)
