@@ -1,5 +1,0 @@
-[1102/130417.351:INFO:CONSOLE(1)] "Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported", source: https://web.whatsapp.com/serviceworker.js (1)
-[1102/130418.317:INFO:CONSOLE(1)] "Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported", source: https://web.whatsapp.com/serviceworker.js (1)
-[1102/130418.323:INFO:CONSOLE(1)] "Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported", source: https://web.whatsapp.com/serviceworker.js (1)
-[1102/130427.674:INFO:CONSOLE(22)] "Warning: Unable to decode image: unrecognized colorspace ", source: https://web.whatsapp.com/pdf.worker.96d1bc1f3d0105cd5a81bae7a9dad228.js (22)
-[1102/130427.950:INFO:CONSOLE(24)] "Warning: Dependent image isn't ready yet", source: https://web.whatsapp.com/vendors~pdf.5885089bd9ccaa6642c1.js (24)
