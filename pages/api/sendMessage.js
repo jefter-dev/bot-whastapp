@@ -19,7 +19,10 @@ export default async function sendMessageWhatsapp(req, res) {
         res.status(404).json({ status: false, message: "Not found message" });
       }
 
-      const client = new Client({ authStrategy: new LocalAuth() });
+      const client = new Client({
+        authStrategy: new LocalAuth(),
+        puppeteer: { headless: true, args: ["--no-sandbox"] },
+      });
       const phone = req.body.phone;
       const message = req.body.message;
 
@@ -40,14 +43,14 @@ export default async function sendMessageWhatsapp(req, res) {
           .sendMessage(chatId, message)
           .then((result) => {
             console.log("Succesfully send message!");
-            
-            setTimeout(function() {
+
+            setTimeout(function () {
               client.destroy(); // DESCTROY client
-            }, 3000)
+            }, 3000);
 
             res
-            .status(200)
-            .json({ status: true, message: "Succesfully send message" });
+              .status(200)
+              .json({ status: true, message: "Succesfully send message" });
           })
           .catch((error) => {
             console.log("Error send message: ", error);

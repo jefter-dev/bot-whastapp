@@ -39,7 +39,10 @@ export default async function sendFileWhatsapp(req, res) {
           .json({ status: false, message: "Not found message system" });
       }
 
-      const client = new Client({ authStrategy: new LocalAuth() });
+      const client = new Client({
+        authStrategy: new LocalAuth(),
+        puppeteer: { headless: true, args: ["--no-sandbox"] },
+      });
       const phone = req.body.phone;
       const file = req.body.file;
       const nameFile = req.body.nameFile;
