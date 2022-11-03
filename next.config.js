@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const ORIGINS_CORS = ['https://bot-whastapp.vercel.app', "http://localhost", "http://localhost:3000", "http://localhost:3001"];
+const ORIGINS_CORS = ['https://bot-whastapp.vercel.app', "https://wdcsistema.com.br", "http://localhost", "http://localhost:3000", "http://localhost:3001"];
 
 const nextConfig = {
   reactStrictMode: false,
