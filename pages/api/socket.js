@@ -38,7 +38,7 @@ export default async function sendMessageWhatsapp(req, res) {
 
       const client = new Client({
         authStrategy: new LocalAuth(),
-        puppeteer: { headless: true },
+        puppeteer: { headless: true, args: ["--no-sandbox"] },
       });
 
       client.on("qr", (qr) => {
