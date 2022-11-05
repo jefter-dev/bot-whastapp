@@ -1,6 +1,12 @@
 import { Server } from "socket.io";
-const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
-import fs from "fs";
+const {
+  Client,
+  LocalAuth,
+  RemoteAuth,
+  MessageMedia,
+} = require("whatsapp-web.js");
+const { MongoStore } = require("wwebjs-mongo");
+const mongoose = require("mongoose");
 import NextCors from "nextjs-cors";
 
 async function base64SendPdf(client, phone, file, fileName) {
@@ -36,47 +42,62 @@ export default async function sendMessageWhatsapp(req, res) {
       console.log("CONNECT SOCKET [connection]");
       socket.emit("status", "CONNECT SOCKET!");
 
-      const client = new Client({
-        authStrategy: new LocalAuth(),
-        puppeteer: { headless: true, args: ["--no-sandbox"] },
+      mongoose.connect(process.env.MONGODB_URI).then(async () => {
+        const store = new MongoStore({ mongoose: mongoose });
+
+        await store.delete({ session: "RemoteAuth" }); // Delete session in mongodb, for will save a new session
+
+        const client = new Client({
+          authStrategy: new RemoteAuth({
+            store: store,
+            backupSyncIntervalMs: 150000,
+          }),
+          puppeteer: { headless: true, args: ["--no-sandbox"] },
+        });
+
+        client.on("qr", (qr) => {
+          // Generate and scan this code with your phone
+          console.log("QR RECEIVED [SOCKET]: ", qr);
+          socket.emit("status", "QR RECEIVED");
+
+          socket.emit("qr", qr);
+        });
+
+        client.on("ready", () => {
+          console.log("Client is ready!");
+
+          socket.emit("status", "Client is ready!");
+
+          setTimeout(function () {
+            client.destroy(); // DESTROY client
+          }, 3000);
+        });
+
+        client.on("remote_session_saved", () => {
+          console.log("SESSION SAVED IN THE DATABASE");
+
+          socket.emit("status", "Saved session in mongodb!");
+        });
+
+        socket.on("message", (data) => {
+          console.log("MESSAGE: ", data.message);
+          console.log("PHONE: ", data.phone);
+
+          const chatId = `${data.phone}@c.us`;
+          client.sendMessage(chatId, data.message);
+        });
+
+        socket.on("file", (data) => {
+          console.log("PHONE: ", data.phone);
+
+          const chatId = `${data.phone}@c.us`;
+          base64SendPdf(client, chatId, data.file, data.nameFile).then(
+            (result) => console.log("RESULT SEND FILE: ", result)
+          );
+        });
+
+        client.initialize();
       });
-
-      client.on("qr", (qr) => {
-        // Generate and scan this code with your phone
-        console.log("QR RECEIVED [SOCKET]: ", qr);
-        socket.emit("status", "QR RECEIVED");
-
-        socket.emit("qr", qr);
-      });
-
-      client.on("ready", () => {
-        console.log("Client is ready!");
-
-        socket.emit("status", "Client is ready!");
-
-        setTimeout(function () {
-          client.destroy(); // DESCTROY client
-        }, 3000);
-      });
-
-      socket.on("message", (data) => {
-        console.log("MESSAGE: ", data.message);
-        console.log("PHONE: ", data.phone);
-
-        const chatId = `${data.phone}@c.us`;
-        client.sendMessage(chatId, data.message);
-      });
-
-      socket.on("file", (data) => {
-        console.log("PHONE: ", data.phone);
-
-        const chatId = `${data.phone}@c.us`;
-        base64SendPdf(client, chatId, data.file, data.nameFile).then((result) =>
-          console.log("RESULT SEND FILE: ", result)
-        );
-      });
-
-      client.initialize();
     });
 
     res.socket.server.io = io;

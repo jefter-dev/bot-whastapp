@@ -1,4 +1,11 @@
-const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
+const {
+  Client,
+  LocalAuth,
+  RemoteAuth,
+  MessageMedia,
+} = require("whatsapp-web.js");
+const { MongoStore } = require("wwebjs-mongo");
+const mongoose = require("mongoose");
 import NextCors from "nextjs-cors";
 
 async function base64SendPdf(client, phone, file, fileName) {
@@ -39,59 +46,69 @@ export default async function sendFileWhatsapp(req, res) {
           .json({ status: false, message: "Not found message system" });
       }
 
-      const client = new Client({
-        authStrategy: new LocalAuth(),
-        puppeteer: { headless: true, args: ["--no-sandbox"] },
+      mongoose.connect(process.env.MONGODB_URI).then(() => {
+        const store = new MongoStore({ mongoose: mongoose });
+
+        const client = new Client({
+          authStrategy: new RemoteAuth({
+            store: store,
+            backupSyncIntervalMs: 150000,
+          }),
+          puppeteer: { headless: true, args: ["--no-sandbox"] },
+        });
+
+        const phone = req.body.phone;
+        const file = req.body.file;
+        const nameFile = req.body.nameFile;
+        const messageSystem = req.body.messageSystem;
+
+        client.on("qr", (qr) => {
+          // Generate and scan this code with your phone
+          console.log("QR RECEIVED", qr);
+
+          res
+            .status(400)
+            .json({ status: false, message: "Whatsapp not connected" });
+
+          setTimeout(function () {
+            client.destroy(); // DESCTROY client
+          }, 3000);
+        });
+
+        client.on("ready", () => {
+          console.log("Client is ready!");
+
+          const chatId = `${phone}@c.us`;
+          client
+            .sendMessage(chatId, messageSystem)
+            .then((result) => {
+              console.log("Succesfully send message: ");
+            })
+            .catch((error) => {
+              console.log("Error send message: ", error);
+            });
+
+          base64SendPdf(client, chatId, file, nameFile)
+            .then((result) => {
+              console.log("RESULT SEND FILE: ", result);
+              setTimeout(function () {
+                client.destroy(); // DESCTROY client
+              }, 3000);
+
+              res
+                .status(200)
+                .json({ status: true, message: "Succesfully send file" });
+            })
+            .catch((error) => {
+              console.log("Error send file: ", error);
+              res
+                .status(400)
+                .json({ status: false, message: "Error send file" });
+            });
+        });
+
+        client.initialize();
       });
-      const phone = req.body.phone;
-      const file = req.body.file;
-      const nameFile = req.body.nameFile;
-      const messageSystem = req.body.messageSystem;
-
-      client.on("qr", (qr) => {
-        // Generate and scan this code with your phone
-        console.log("QR RECEIVED", qr);
-
-        res
-          .status(400)
-          .json({ status: false, message: "Whatsapp not connected" });
-
-        setTimeout(function () {
-          client.destroy(); // DESCTROY client
-        }, 3000);
-      });
-
-      client.on("ready", () => {
-        console.log("Client is ready!");
-
-        const chatId = `${phone}@c.us`;
-        client
-          .sendMessage(chatId, messageSystem)
-          .then((result) => {
-            console.log("Succesfully send message: ");
-          })
-          .catch((error) => {
-            console.log("Error send message: ", error);
-          });
-
-        base64SendPdf(client, chatId, file, nameFile)
-          .then((result) => {
-            console.log("RESULT SEND FILE: ", result);
-            setTimeout(function () {
-              client.destroy(); // DESCTROY client
-            }, 3000);
-
-            res
-              .status(200)
-              .json({ status: true, message: "Succesfully send file" });
-          })
-          .catch((error) => {
-            console.log("Error send file: ", error);
-            res.status(400).json({ status: false, message: "Error send file" });
-          });
-      });
-
-      client.initialize();
     } catch (err) {
       console.error(err);
       res.status(500).json({ msg: "Something went wrong" });

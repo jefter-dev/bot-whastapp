@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "mongodb": "^4.11.0",
+    "mongoose": "^6.7.1",
     "next": "12.3.1",
     "nextjs-cors": "^2.1.1",
     "qrcode": "^1.5.1",
@@ -16,7 +18,9 @@
     "react-dom": "18.2.0",
     "socket.io": "^4.5.3",
     "socket.io-client": "^4.5.3",
-    "whatsapp-web.js": "^1.18.2"
+    "tar": "^6.1.12",
+    "whatsapp-web.js": "^1.18.2",
+    "wwebjs-mongo": "^1.1.0"
   },
   "devDependencies": {
     "eslint": "8.25.0",

@@ -38,5 +38,8 @@ next-env.d.ts
 # web-whatsapp
 .wwebjs_auth
 
+# __connectionsbot__
+__connectionsbot__
+
 # __tests__
 __tests__

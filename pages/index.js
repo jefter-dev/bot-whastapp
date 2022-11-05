@@ -8,6 +8,8 @@ const Home = () => {
   const [imgQrCode, setImgQrCode] = useState(false);
 
   const socketInitializer = async () => {
+    setStatus("Carregando...");
+    
     fetch(`/api/socket`);
     // fetch(`https://bot-whastapp.vercel.app/api/socket?user=${user}`);
     socket = io();
@@ -22,9 +24,13 @@ const Home = () => {
       setStatus(status);
 
       if(status == "Client is ready!") {
-        setTimeout(() => {
-          window.location.reload();
-        }, 4000)
+        const canvas = document.getElementById("canvas");
+        canvas.style.display = "none";
+
+        // display: none;
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 4000)
       }
     });
 
@@ -74,7 +80,7 @@ const Home = () => {
       let fileBase64 = await toBase64(file.files[0]);
       fileBase64 = fileBase64.replace("data:application/pdf;base64,", "");
 
-      console.log("fileBase64: ", fileBase64)
+      console.log("fileBase64: ", fileBase64);
 
       // console.log("FILE: ", file.files);
       socket.emit(
@@ -89,10 +95,6 @@ const Home = () => {
     return false;
   };
 
-  const restartPage = () => {
-    return window.location.reload();
-  };
-
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -104,9 +106,18 @@ const Home = () => {
   return (
     <div className="container">
       {status && (
-        <div class="containerStatus">
-          <div className={`status statusSuccess`}>{status}</div>
-        </div>
+        <>
+          <div class="containerStatus">
+            <div className={`status statusSuccess`}>{status}</div>
+          </div>
+          {status == "QR RECEIVED" && "Escaneie o código para continuar"}
+          {status == "Client is ready!" && (
+            <div align="center">
+              Aguarde mais uns instantes...<div class="loader"></div>
+            </div>
+          )}
+          {status == "Saved session in mongodb!" && "PRONTO PARA USO"}
+        </>
       )}
       <canvas id="canvas"></canvas>
       {!imgQrCode &&
@@ -114,13 +125,15 @@ const Home = () => {
           ? "Client connected"
           : !status &&
             "Client connected" && (
-              <button onClick={socketInitializer}>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span>Conectar ao whatsapp</span>
-              </button>
+              <div className="containerSendMessage">
+                <button onClick={socketInitializer}>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span>Conectar ao whatsapp</span>
+                </button>
+              </div>
             ))}
       {/* <div className="containerSendMessage">
         <label>Enviar Mensagem</label>
