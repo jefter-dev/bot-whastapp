@@ -14,7 +14,7 @@ const nextConfig = {
     externalResolver: true,
     bodyParser: false,
     responseLimit: false,
-  },
+  }
 }
 
 module.exports = nextConfig

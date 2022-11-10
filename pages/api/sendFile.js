@@ -54,7 +54,7 @@ export default async function sendFileWhatsapp(req, res) {
             store: store,
             backupSyncIntervalMs: 150000,
           }),
-          puppeteer: { headless: true, args: ["--no-sandbox"] },
+          puppeteer: { headless: false, args: ["--no-sandbox"] },
         });
 
         const phone = req.body.phone;
@@ -82,7 +82,7 @@ export default async function sendFileWhatsapp(req, res) {
           client
             .sendMessage(chatId, messageSystem)
             .then((result) => {
-              console.log("Succesfully send message: ");
+              console.log("Succesfully send message!");
             })
             .catch((error) => {
               console.log("Error send message: ", error);
