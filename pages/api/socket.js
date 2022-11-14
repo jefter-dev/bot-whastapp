@@ -40,7 +40,7 @@ export default async function sendMessageWhatsapp(req, res) {
 
     io.on("connection", (socket) => {
       console.log("CONNECT SOCKET [connection]");
-      socket.emit("status", "CONNECT SOCKET!");
+      socket.emit("status", "CONNECT SOCKET NEW SERVER!");
 
       mongoose.connect(process.env.MONGODB_URI).then(async () => {
         const store = new MongoStore({ mongoose: mongoose });
