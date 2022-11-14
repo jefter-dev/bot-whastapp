@@ -1,6 +1,6 @@
 git remote rm origin
 git remote add origin https://github.com/jefter-dev/bot-whastapp.git
 git add .
-git commit -m "Update bot whataspp"
+git commit -m "Update bot whataspp - update 1"
 git branch -M main
 git push --set-upstream origin main
