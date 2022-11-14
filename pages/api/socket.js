@@ -45,14 +45,14 @@ export default async function sendMessageWhatsapp(req, res) {
       mongoose.connect(process.env.MONGODB_URI).then(async () => {
         const store = new MongoStore({ mongoose: mongoose });
 
-        await store.delete({ session: "RemoteAuth" }); // Delete session in mongodb, for will save a new session
+        // await store.delete({ session: "RemoteAuth" }); // Delete session in mongodb, for will save a new session
 
         const client = new Client({
           authStrategy: new RemoteAuth({
             store: store,
             backupSyncIntervalMs: 150000,
           }),
-          puppeteer: { headless: true, args: ["--no-sandbox"] },
+          puppeteer: { headless: false, args: ["--no-sandbox"] },
         });
 
         client.on("qr", (qr) => {
