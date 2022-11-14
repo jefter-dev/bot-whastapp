@@ -52,7 +52,7 @@ export default async function sendMessageWhatsapp(req, res) {
             store: store,
             backupSyncIntervalMs: 150000,
           }),
-          puppeteer: { headless: false, args: ["--no-sandbox"] },
+          puppeteer: { headless: true, args: ["--no-sandbox"] },
         });
 
         client.on("qr", (qr) => {
