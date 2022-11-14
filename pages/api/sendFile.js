@@ -54,7 +54,7 @@ export default async function sendFileWhatsapp(req, res) {
             store: store,
             backupSyncIntervalMs: 150000,
           }),
-          puppeteer: { headless: false, args: ["--no-sandbox"] },
+          puppeteer: { headless: true, args: ["--no-sandbox"] },
         });
 
         const phone = req.body.phone;
