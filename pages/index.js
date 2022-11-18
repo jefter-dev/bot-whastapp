@@ -116,7 +116,7 @@ const Home = () => {
               Aguarde mais uns instantes...<div class="loader"></div>
             </div>
           )}
-          {status == "Saved session in mongodb!" && "PRONTO PARA USO"}
+          {status == "Saved session!" && "PRONTO PARA USO"}
         </>
       )}
       <canvas id="canvas"></canvas>
